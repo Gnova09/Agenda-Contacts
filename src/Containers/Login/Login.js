@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { StateContext } from "../../Context/StateContext";//cambiar el context
 import { DivCenter } from './Components/DivCenter';
+import { Textbox } from './Components/Textbox';
 
 
 const Login = () => {
@@ -54,24 +55,36 @@ const Login = () => {
     return (
         <DivCenter >
 
-            <form className='LoginContainer'>
+            <form className='LoginContainer' onSubmit={handleSubmit} >
                 <fieldset >
                     <legend>Signin</legend>
-                    <div>
+                    <>
                         <label>User</label>
-                        <input required type="text" />
-                    </div>
+                        <Textbox required 
+                        type="text" 
+                        onChange={(e)=>setEmail(e.target.value) } />
+                    </>
 
-                    <div>
+                    <>
                         <label>Password</label>
-                        <input required type="password" />
-                    </div>
-
-                    <div classname="Submitbutton">
-                        <input type="submit" value="Signin" />
-                    </div>
+                        <Textbox required 
+                        type="password" 
+                        onChange={(e)=> setPass(e.target.value)} />
+                    </>
+                    < >
+                        <span>
+                        <Textbox type="checkbox" /> Remenber me
+                        </span>
+                    </>
+                    < >
+                        <Textbox 
+                        classname="Submitbutton" 
+                        type="submit" 
+                        value="Signin"  
+                        onSubmit=""
+                        />
+                    </>
                 </fieldset>
-
             </form>
         </DivCenter>
     );

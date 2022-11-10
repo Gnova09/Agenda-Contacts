@@ -1,5 +1,6 @@
 import React,{useState} from 'react'
 import './App.css';
+import Home from './Containers/Home/Home';
 import Login from './Containers/Login/Login';
 import {StateContext} from './Context/StateContext';
 
@@ -8,15 +9,6 @@ function App() {
   const [isSignedIn, setIsSignedIn]=useState(false);
   const [user, setUser]=useState({});
 
-  //SETTING THE STATE BOX//////////
-  const [box, setBox] = useState({});
- 
-  ////////////////INPUT ////////////  
-  const [input, setInput] = useState("");
-
-  /////////Setting Image///////////////////
-  const [imageUrl, setImageUrl] = useState("");
- 
   ////////Context APP//////////
   let Context_value={
     route:{
@@ -30,15 +22,6 @@ function App() {
     usuario:{
      user,
      setUser
-    },
-    
-    img:{
-      input,
-      setInput,
-      box,
-      setBox,
-      setImageUrl, 
-      imageUrl
     }
   }
   ////////////////RENDER PRINCIPAL PAGE///////////////////
@@ -52,9 +35,7 @@ function App() {
         {route === "signin"
           ? <Login />
           : (route === "home"
-            ? <div>
-              Home
-            </div>
+            ? <Home />
             : <h1>Registrar</h1>
           )
         }
