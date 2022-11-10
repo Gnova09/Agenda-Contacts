@@ -53,24 +53,26 @@ const Login = () => {
 
     return (
         <DivCenter >
-            <div>
 
-                <form>
-                    <>
+            <form className='LoginContainer'>
+                <fieldset >
+                    <legend>Signin</legend>
+                    <div>
                         <label>User</label>
-                        <input required type="text" placeholder="User" />
-                    </>
-
-                    <>
-                        <label>Password</label>
-                        <input required type="password" placeholder="Password" />
-                    </>
+                        <input required type="text" />
+                    </div>
 
                     <div>
+                        <label>Password</label>
+                        <input required type="password" />
+                    </div>
+
+                    <div classname="Submitbutton">
                         <input type="submit" value="Signin" />
                     </div>
-                </form>
-            </div>
+                </fieldset>
+
+            </form>
         </DivCenter>
     );
 }
