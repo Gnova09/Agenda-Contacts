@@ -1,55 +1,66 @@
-import React, { useState } from 'react'
+import React, { useContext,useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import styled from 'styled-components';
+import { StateContext } from '../../../Context/StateContext';
+import UpdateContact from './UpdateContact';
 
 
 //////COMPONENTS//////
 const Tablediv = styled.div`
-    height: 60%;
+    height: 65%;
     width: 100%;
+    display: flex;
+    flex-direction: column;
     `
 const UpdateBTN = styled.button`
     height: 80%;
     width: auto;
-    background: orange;
+    background: ${props => props.primary ? "orange" : "red"};
     border: none;
     border-radius: 5px;
     :hover{
         cursor: pointer;
     }
 `
-const DeleteBTN = styled.button`
-    height: 80%;
-    width: auto;
-    background: red;
-    border: none;
+const AddBtn = styled.button`
+    height: 50px;
+    
+    width: fit-content;
+    background: skyblue ;
+    border:none;
     border-radius: 5px;
+    color: white;
     :hover{
         cursor: pointer;
     }
-    `
+`
 //////TABLE//////
 const Table = () => {
-    const [contacts, setContact] = useState([
-        { id: 1, lastName: 'Snow', firstName: 'Jon', email: "bueno@gmail.com" },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', email: "pepe@gmail.com" },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', email: "juan@gmail.com" },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', email: "carol@gmail.com" },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', email: "miguel@gmail.com" },
-        { id: 6, lastName: 'Melisandre', firstName: "ROCKTAS", email: "georges@hotmail.com" },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', email: "nova@yahoo.com" },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', email: "buo@gmail.com" },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', email: "nicolee@hotmail.com" }
-    ]);
+    const { table } = useContext(StateContext);
+    const { contacts, setContact } = table;
+    const [update,setUpdate]=useState([{ id: 0, lastName: '', firstName: '',mobile:"", email: "" }]);
+    const[accion,setAccion]=useState(false)
+
     const handleDeleteBtn = (id) => {
-        setContact(contacts.filter((item)=> item.id !== id));
-        console.log(contacts)
+        setContact(contacts.filter((item) => item.id !== id));
+    }
+    const handleUpdateBtn = (id) => {
+        const updatediv = document.getElementById('UpdateContact');
+        updatediv.style.display = "flex";
+        setUpdate(contacts.filter((item)=>item.id === id));
+    }
+    const handleAddbtn = () => {
+        const updatediv = document.getElementById('UpdateContact');
+        updatediv.style.display = "flex";
+        setAccion(true);
+        
     }
     const columns = [
         { field: 'id', headerName: 'No.', width: 70 },
         { field: 'firstName', headerName: 'First Name', width: 130 },
         { field: 'lastName', headerName: 'Last Name', width: 130 },
-        {field: 'email', headerName: 'Email Address', flex: 1},
+        { field: 'email', headerName: 'Email Address', flex: 1 },
+        { field: 'mobile', headerName: 'Mobile #', flex: 0.5 },
         {
             field: 'fullName',
             headerName: 'Full name',
@@ -66,8 +77,8 @@ const Table = () => {
             renderCell: (params) => {
                 // you will find row info in params
                 //returning button Update with handle function
-                return(
-                <UpdateBTN onClick={() => alert("clicked")}>Update</UpdateBTN>);    
+                return (
+                    <UpdateBTN primary onClick={() => handleUpdateBtn(params.row.id)}>Update</UpdateBTN>);
             }
         },
         {
@@ -77,8 +88,8 @@ const Table = () => {
             renderCell: (params) => {
                 // you will find row info in params
                 //returning button Delete with handle function
-                return(
-                <DeleteBTN onClick={() => handleDeleteBtn(params.row.id)}>Delete</DeleteBTN>);    
+                return (
+                    <UpdateBTN onClick={() => handleDeleteBtn(params.row.id)}> Delete</UpdateBTN>);
             }
         }
     ];
@@ -91,6 +102,8 @@ const Table = () => {
                 rowsPerPageOptions={[5]}
                 checkboxSelection
             />
+            <UpdateContact params={update} add={accion}/>
+            <AddBtn onClick={()=> handleAddbtn() }>New Contact</AddBtn>
         </Tablediv>
     )
 }

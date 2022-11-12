@@ -7,4 +7,5 @@ export const Textbox = styled.input`
             border-radius: 5px; 
             height: 30%; 
             color: white;
+            cursor: ${props=>props.primary?"pointer":""}
 `

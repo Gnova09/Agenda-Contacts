@@ -82,6 +82,7 @@ const Login = () => {
                         type="submit" 
                         value="Signin"  
                         onSubmit=""
+                        primary
                         />
                     </>
                 </fieldset>
