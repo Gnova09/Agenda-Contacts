@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { StateContext } from "../../Context/StateContext";//cambiar el context
 import { DivCenter } from './Components/DivCenter';
 import { Textbox } from './Components/Textbox';
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore'
+
 
 
 const Login = () => {
@@ -25,31 +27,16 @@ const Login = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+        const dbFirebase = getFirestore();
+        const dbcollection = collection(dbFirebase, "Usuarios");
+        const dbfilter = query(dbcollection, where('Email', '==', email), where('Pass', '==', pass)); //valido el usuario en Firebase
 
-        var raw = JSON.stringify({
-            "email": email,
-            "password": pass
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        await fetch("https://polar-anchorage-52776.herokuapp.com/login", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                // eslint-disable-next-line 
-                const res = result === "Not enable to login" ? alert("Credenciales incorrectas") :
-                    (
-                        setUser(result),
-                        setIsSignedIn(true)
-                    );
+        await getDocs(dbfilter)
+            .then(res => {
+                console.log(res?.data);
+                console.log(res.docs.map(user => ({ id: user.id, ...user.data() })))
             })
+
     }
 
     return (
@@ -60,29 +47,29 @@ const Login = () => {
                     <legend>Signin</legend>
                     <>
                         <label>User</label>
-                        <Textbox required 
-                        type="text" 
-                        onChange={(e)=>setEmail(e.target.value) } />
+                        <Textbox required
+                            type="text"
+                            onChange={(e) => setEmail(e.target.value)} />
                     </>
 
                     <>
                         <label>Password</label>
-                        <Textbox required 
-                        type="password" 
-                        onChange={(e)=> setPass(e.target.value)} />
+                        <Textbox required
+                            type="password"
+                            onChange={(e) => setPass(e.target.value)} />
                     </>
                     < >
                         <span>
-                        <Textbox type="checkbox" /> Remenber me
+                            <Textbox type="checkbox" /> Remenber me
                         </span>
                     </>
                     < >
-                        <Textbox 
-                        classname="Submitbutton" 
-                        type="submit" 
-                        value="Signin"  
-                        onSubmit=""
-                        primary
+                        <Textbox
+                            classname="Submitbutton"
+                            type="submit"
+                            value="Signin"
+                            onSubmit=""
+                            primary
                         />
                     </>
                 </fieldset>
