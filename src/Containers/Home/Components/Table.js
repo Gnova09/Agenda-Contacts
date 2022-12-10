@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import styled from 'styled-components';
 import { StateContext } from '../../../Context/StateContext';
 import UpdateContact from './UpdateContact';
+import SendEmail from './SendEmail';
 import { deleteDoc, doc,getDocs,collection, getFirestore } from 'firebase/firestore';
 
 
@@ -41,7 +42,9 @@ const Table = () => {
     const { contacts, setContact } = table;
     const [update, setUpdate] = useState([{ id: 0, lastName: '', firstName: '', mobile: "", email: "" }]);
     const [accion, setAccion] = useState(false)
+    const [ email, setEmail] = useState({})
 
+    //DELETE BTN //
     const handleDeleteBtn = async (id) => {
         console.log(id)
         await deleteDoc(doc(getFirestore(), 'Contactos', id))
@@ -51,18 +54,30 @@ const Table = () => {
                 setContact(res.docs.map(user => ({ id: user.id, ...user.data() })))
             })
     }
+
+    //UPDATE BTN//
     const handleUpdateBtn = (id) => {
         const updatediv = document.getElementById('UpdateContact');
         updatediv.style.display = "flex";
         setUpdate(contacts.filter((item) => item.id === id));
     }
+
+    //ADD BTN//
     const handleAddbtn = () => {
         const updatediv = document.getElementById('UpdateContact');
         updatediv.style.display = "flex";
         setAccion(true);
     }
+
+    //EMAIL BTN//
+    const handleSendEmail =(row)=>{
+        const sendEmailDiv = document.getElementById('SendEmailDiv');
+        sendEmailDiv.style.display = "flex";
+        setEmail(row);
+    }
+
+    //TABLE COLUMNS//
     const columns = [
-        { field: 'id', headerName: 'No.', width: 70 },
         { field: 'Nombre', headerName: 'First Name', width: 130 },
         { field: 'Apellidos', headerName: 'Last Name', width: 130 },
         { field: 'Email', headerName: 'Email Address', flex: 1 },
@@ -88,6 +103,17 @@ const Table = () => {
             }
         },
         {
+            field: "email",
+            headerName: "Email",
+            width: 90,
+            renderCell: (params) => {
+                // you will find row info in params
+                //returning button Update with handle function
+                return (
+                    <UpdateBTN primary onClick={() => handleSendEmail(params.row)}>Email</UpdateBTN>);
+            }
+        },
+        {
             field: "delete",
             headerName: "Delete",
             width: 90,
@@ -106,7 +132,9 @@ const Table = () => {
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
+                checkboxSelection
             />
+            <SendEmail params={email} />
             <UpdateContact params={update} add={accion} />
             <AddBtn onClick={() => handleAddbtn()}>New Contact</AddBtn>
         </Tablediv>

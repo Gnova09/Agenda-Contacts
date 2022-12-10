@@ -99,7 +99,7 @@ const UpdateContact = (user, add) => {
     const handleUpdatebtn = async (id) => {
         
         console.log(id)
-        await updateDoc(doc(dbcollection, id), {
+        await updateDoc(doc(getFirestore(),'Contactos', id), {
             Apellidos: Lname,
             Nombre: Fname,
             Mobile: Mobile,
@@ -108,6 +108,7 @@ const UpdateContact = (user, add) => {
         ContactUpdate();
         handleCancelbtn();
     }
+    //ADD BTN//
     const handleAddbtn = async (id) => {
         await addDoc(
             dbcollection,
