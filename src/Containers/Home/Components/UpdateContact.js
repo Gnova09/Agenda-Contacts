@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { StateContext } from '../../../Context/StateContext'
+import { getFirestore, getDocs, doc, collection, addDoc, updateDoc } from 'firebase/firestore'
 
 const Container = styled.div`
     display: none;
@@ -75,6 +76,14 @@ const UpdateContact = (user, add) => {
     const [Mobile, setMobile] = useState(params[0].mobile);
     const { table } = useContext(StateContext);
     const { contacts, setContact } = table;
+    const dbcollection = collection(getFirestore(), "Contactos");
+    //actualizar la tabla//
+    const ContactUpdate = () => {
+        getDocs(dbcollection)
+            .then(res => {
+                setContact(res.docs.map(user => ({ id: user.id, ...user.data() })))
+            })
+    }
     useEffect(() => {
         setFname(params[0].firstName)
         setLname(params[0].lastName)
@@ -87,34 +96,29 @@ const UpdateContact = (user, add) => {
         //eslint-disable-next-line
     }, [user]
     )
-    const handleUpdatebtn = (id) => {
-
-        setContact(contacts.map((item) => {
-            if (item.id === id) {
-                return (
-                    {
-                        id: item.id,
-                        lastName: Lname,
-                        firstName: Fname,
-                        mobile: Mobile,
-                        email: Email
-                    }
-                )
-            } else { return item }
-        }));
-
-        handleCancelbtn()
+    const handleUpdatebtn = async (id) => {
+        
+        console.log(id)
+        await updateDoc(doc(dbcollection, id), {
+            Apellidos: Lname,
+            Nombre: Fname,
+            Mobile: Mobile,
+            Email: Email
+        });
+        ContactUpdate();
+        handleCancelbtn();
     }
-    const handleAddbtn = (id) => {
-        setContact(
-            [...contacts, {
-                id: "n/a",
-                lastName: Lname,
-                firstName: Fname,
-                mobile: Mobile,
-                email: Email
-            }]
-        );
+    const handleAddbtn = async (id) => {
+        await addDoc(
+            dbcollection,
+            {
+                Apellidos: Lname,
+                Nombre: Fname,
+                Mobile: Mobile,
+                Email: Email
+            }
+        ).then(id => console.log);
+        ContactUpdate();
         handleCancelbtn();
     }
 
@@ -141,7 +145,7 @@ const UpdateContact = (user, add) => {
             </Form>
             <BtnContainer>
                 <BtnInput onClick={() => handleCancelbtn()}>Cancel</BtnInput>
-                <BtnInput type="submit" onClick={() => add? handleAddbtn(params[0].id):handleUpdatebtn(params[0].id)} update>Save</BtnInput>
+                <BtnInput type="submit" onClick={() => add ? handleAddbtn(params[0].id) : handleUpdatebtn(params[0].id)} update>Save</BtnInput>
             </BtnContainer>
         </Container>
     )

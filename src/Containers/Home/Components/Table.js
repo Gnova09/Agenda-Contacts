@@ -1,8 +1,9 @@
-import React, { useContext,useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import styled from 'styled-components';
 import { StateContext } from '../../../Context/StateContext';
 import UpdateContact from './UpdateContact';
+import { deleteDoc, doc,getDocs,collection, getFirestore } from 'firebase/firestore';
 
 
 //////COMPONENTS//////
@@ -38,37 +39,42 @@ const AddBtn = styled.button`
 const Table = () => {
     const { table } = useContext(StateContext);
     const { contacts, setContact } = table;
-    const [update,setUpdate]=useState([{ id: 0, lastName: '', firstName: '',mobile:"", email: "" }]);
-    const[accion,setAccion]=useState(false)
+    const [update, setUpdate] = useState([{ id: 0, lastName: '', firstName: '', mobile: "", email: "" }]);
+    const [accion, setAccion] = useState(false)
 
-    const handleDeleteBtn = (id) => {
-        setContact(contacts.filter((item) => item.id !== id));
+    const handleDeleteBtn = async (id) => {
+        console.log(id)
+        await deleteDoc(doc(getFirestore(), 'Contactos', id))
+        //actualizar la tabla//
+        getDocs(collection(getFirestore(),"Contactos"))
+            .then(res => {
+                setContact(res.docs.map(user => ({ id: user.id, ...user.data() })))
+            })
     }
     const handleUpdateBtn = (id) => {
         const updatediv = document.getElementById('UpdateContact');
         updatediv.style.display = "flex";
-        setUpdate(contacts.filter((item)=>item.id === id));
+        setUpdate(contacts.filter((item) => item.id === id));
     }
     const handleAddbtn = () => {
         const updatediv = document.getElementById('UpdateContact');
         updatediv.style.display = "flex";
         setAccion(true);
-        
     }
     const columns = [
         { field: 'id', headerName: 'No.', width: 70 },
-        { field: 'firstName', headerName: 'First Name', width: 130 },
-        { field: 'lastName', headerName: 'Last Name', width: 130 },
-        { field: 'email', headerName: 'Email Address', flex: 1 },
-        { field: 'mobile', headerName: 'Mobile #', flex: 0.5 },
+        { field: 'Nombre', headerName: 'First Name', width: 130 },
+        { field: 'Apellidos', headerName: 'Last Name', width: 130 },
+        { field: 'Email', headerName: 'Email Address', flex: 1 },
+        { field: 'Mobile', headerName: 'Mobile #', flex: 0.5 },
         {
             field: 'fullName',
             headerName: 'Full name',
-            description: 'This column has a value getter and is not sortable.',
+            description: 'Nombre completo',
             sortable: false,
             width: 160,
             valueGetter: (params) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+                `${params.row.Nombre || ''} ${params.row.Apellidos || ''}`,
         },
         {
             field: "update",
@@ -100,10 +106,9 @@ const Table = () => {
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
-                checkboxSelection
             />
-            <UpdateContact params={update} add={accion}/>
-            <AddBtn onClick={()=> handleAddbtn() }>New Contact</AddBtn>
+            <UpdateContact params={update} add={accion} />
+            <AddBtn onClick={() => handleAddbtn()}>New Contact</AddBtn>
         </Tablediv>
     )
 }

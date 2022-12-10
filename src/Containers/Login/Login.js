@@ -4,8 +4,6 @@ import { DivCenter } from './Components/DivCenter';
 import { Textbox } from './Components/Textbox';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore'
 
-
-
 const Login = () => {
 
     const { route, login, usuario } = useContext(StateContext);
@@ -30,13 +28,11 @@ const Login = () => {
         const dbFirebase = getFirestore();
         const dbcollection = collection(dbFirebase, "Usuarios");
         const dbfilter = query(dbcollection, where('Email', '==', email), where('Pass', '==', pass)); //valido el usuario en Firebase
-
         await getDocs(dbfilter)
             .then(res => {
-                console.log(res?.data);
-                console.log(res.docs.map(user => ({ id: user.id, ...user.data() })))
+                setUser(res.docs.map(user => ({ id: user.id, ...user.data() })))
+                setIsSignedIn(true)
             })
-
     }
 
     return (

@@ -33,21 +33,19 @@ font-weight: bold;
 `
 const Navbar = () => {
     const { route, usuario, login } = useContext(StateContext);
-    const {user} = usuario;
+    const {user, setUser} = usuario;
     const {setRoute}=route;
-    const{setUser}=usuario;
     const {setIsSignedIn}=login;
     const handleSingOut=() =>{ 
         setUser({})
         setIsSignedIn(false);
         setRoute("signin")
     }
-
     return (
         <Nav>
-            <Label>Agenda Contactos</Label>
+            <Label>Contact Library</Label>
             <Ul>
-                <li>{user.name.toUpperCase()}</li>
+                <li>{user[0].name}</li>
                 <Logout onClick={()=>handleSingOut()}>Log out</Logout>
             </Ul>
         </Nav>
