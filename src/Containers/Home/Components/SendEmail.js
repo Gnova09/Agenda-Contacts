@@ -42,9 +42,9 @@ const SendEmail = ({params}) => {
         const UpdateContact = document.getElementById("SendEmailDiv");
         UpdateContact.style.display = "none"
     }
+    //submit Email//
     const handleSubmitEmail = (e) => {
-      //  e.preventDefault();
-
+       
         emailjs.sendForm('service_jnxlxfi', 'template_zed7zpm', form.current, 'gB6uaI2Iy3WdaHeFv')
             .then((result) => {
                 result.status=== 200 ? alert("Correo Enviado" ): console.log(result);
@@ -52,12 +52,13 @@ const SendEmail = ({params}) => {
                 console.log(error.text);
             });
         //e.target.reset();
+        document.getElementById("formEmail").reset(); //reseteamos los campos
         handleCancelbtn();
     };
 
     return (
         <Container id= "SendEmailDiv">
-            <FormEmail ref={form} onSubmit={handleSubmitEmail}>
+            <FormEmail ref={form} onSubmit={handleSubmitEmail} id="formEmail">
                 <label>Name</label>
                 <input type="text" name="user_name" value={`${params.Nombre} ${params.Apellidos}`} />
                 <label>Email</label>
